@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.AddressBookDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.entity.AddressBookEntity" id="contactMap">
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="smaccounts" column="smaccounts"/>
+        <result property="address" column="address"/>
+        <result property="collect" column="collect"/>
+        <result property="crtTime" column="crt_time"/>
+    </resultMap>
+
+	<select id="selectListVO"
+		resultType="com.entity.vo.AddressBookVO" >
+		SELECT * FROM address_book  ab
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectVO"
+		resultType="com.entity.vo.AddressBookVO" >
+		SELECT  ab.* FROM address_book  ab
+ 		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+    <select id="selectListView"
+		resultType="com.entity.view.AddressBookView" >
+
+		SELECT  ab.* FROM address_book  ab
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.entity.view.AddressBookView" >
+		SELECT * FROM address_book  ab <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+	<update id="doCollect" parameterType="string">
+		update address_book ab set ab.collect='已收藏' where id=${id}
+	</update>
+
+	<select id="selectCollectListView"
+			resultType="com.entity.view.AddressBookView" >
+		select
+		ab.id,
+		ab.name,
+		ab.phone,
+		ab.email,
+		ab.smaccounts,
+		ab.collect,
+		ab.address,
+		case when ab.id in (select ia.ass_id from info_ass ia where ia.host_id=1) then
+		'已关联'
+		else
+		'未关联'
+		end coltype
+		from address_book ab
+		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	<insert id="insertAss">
+		insert into info_ass(host_id,ass_id) values(#{param1},#{param2})
+	</insert>
+	
+</mapper>
